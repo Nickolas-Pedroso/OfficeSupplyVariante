@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Carrinho - OfficeSupply Online</title>
+    <link rel="stylesheet" href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style-control.css">
+  </head>
+  <body>
+  <header>
+    <div class="container">
+      <h1>OfficeSupply Online</h1>
+      <nav>
+        <ul>
+          <li><a href="index.html">Início</a></li>
+          <li><a href="produtos.html">Produtos</a></li>
+          <li><a id="menu-promocoes" href="promocoes.html">Promoções</a></li>
+          <li><a href="contato.html">Contato</a></li>
+          <li><a href="cart.html">Carrinho</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+    <main class="container my-4">
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Produto e Serviço <small class="text-muted">(Itens no carrinho)</small></h5>
+              <div id="cartContents">Carregando...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Resumo</h5>
+              <div class="mb-2 d-flex justify-content-between"><span>Valor dos Produtos:</span><strong id="summarySubtotal">R$ 0,00</strong></div>
+              <div class="mb-2 d-flex justify-content-between"><span>Frete:</span><strong id="summaryShipping">R$ 0,00</strong></div>
+              <hr>
+              <div class="mb-3 d-flex justify-content-between"><span class="fw-bold">Total:</span><strong id="summaryTotal">R$ 0,00</strong></div>
+              <div class="d-grid">
+                <button id="continueBtn" class="btn btn-warning btn-lg">Continuar</button>
+                <button id="clearCartBtn" class="btn btn-link text-danger mt-2">REMOVER TODOS OS PRODUTOS</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-dark text-white py-3 mt-4">
+      <div class="container text-center">&copy; 2025 OfficeSupply Online</div>
+    </footer>
+
+    <script src="bootstrap-5.3.8-dist/js/bootstrap.min.js"></script>
+    <script src="cart.js"></script>
+    <script src="products.js"></script>
+    <script>
+      // use centralized window.products exposed by products.js
+      const products = window.products || {};
+
+      // ensure numeric price attached (in case products.js ran before parsePriceBR)
+      Object.keys(products).forEach(k => { if (!products[k]._priceNumber) products[k]._priceNumber = window.parsePriceBR(products[k].price); });
+
+      function renderCart() {
+        const cart = window.getCart();
+        const container = document.getElementById('cartContents');
+        if (!cart || cart.length === 0) { container.innerHTML = '<p class="mb-0">O carrinho está vazio.</p>'; updateSummary(); return; }
+
+        let html = '';
+        cart.forEach(item => {
+          const p = products[item.id] || { title: 'Produto', img:'', price: 'R$ 0,00' };
+          const itemTotal = (p._priceNumber||0) * item.qty;
+          html += `
+            <div class="d-flex align-items-center mb-3">
+              <img src="${p.img}" class="me-3" style="width:80px;height:60px;object-fit:cover;border-radius:6px" />
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between">
+                  <div><strong>${p.title}</strong><div class="text-muted small">${p.price}</div></div>
+                  <div><small class="text-muted">${window.formatCurrencyBR(itemTotal)}</small></div>
+                </div>
+                <div class="mt-2 d-flex align-items-center gap-2">
+                  <button class="btn btn-sm btn-outline-secondary qty-dec" data-id="${item.id}">−</button>
+                  <input type="number" min="1" value="${item.qty}" data-id="${item.id}" class="form-control form-control-sm qty-input" style="width:70px" />
+                  <button class="btn btn-sm btn-outline-secondary qty-inc" data-id="${item.id}">+</button>
+                  <button class="btn btn-sm btn-link text-danger ms-2 remove-item" data-id="${item.id}">Remover</button>
+                </div>
+              </div>
+            </div>`;
+        });
+
+        container.innerHTML = html;
+
+        // wire events
+        container.querySelectorAll('.remove-item').forEach(b=>b.addEventListener('click', e=>{ window.removeFromCart(e.target.dataset.id); renderCart(); }));
+        container.querySelectorAll('.qty-input').forEach(i=>i.addEventListener('change', e=>{ const id=e.target.dataset.id; const v=parseInt(e.target.value)||1; window.updateQty(id, v); renderCart(); }));
+        container.querySelectorAll('.qty-dec').forEach(b=>b.addEventListener('click', e=>{ const id=e.target.dataset.id; const cart=window.getCart(); const it=cart.find(x=>x.id===id); if(it) { window.updateQty(id, Math.max(1, it.qty-1)); renderCart(); } }));
+        container.querySelectorAll('.qty-inc').forEach(b=>b.addEventListener('click', e=>{ const id=e.target.dataset.id; const cart=window.getCart(); const it=cart.find(x=>x.id===id); if(it) { window.updateQty(id, it.qty+1); renderCart(); } }));
+
+        updateSummary();
+      }
+
+      function updateSummary() {
+        const totals = window.computeTotals(products);
+        document.getElementById('summarySubtotal').textContent = window.formatCurrencyBR(totals.subtotal);
+        document.getElementById('summaryShipping').textContent = window.formatCurrencyBR(totals.shipping);
+        document.getElementById('summaryTotal').textContent = window.formatCurrencyBR(totals.total);
+      }
+
+      document.addEventListener('DOMContentLoaded', ()=>{
+        renderCart();
+        document.getElementById('clearCartBtn').addEventListener('click', ()=>{ window.clearCart(); renderCart(); });
+        document.getElementById('continueBtn').addEventListener('click', ()=>{ alert('Checkout não implementado neste exemplo.'); });
+      });
+    </script>
+

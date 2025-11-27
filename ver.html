@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ver Produto - OfficeSupply Online</title>
+    <link rel="stylesheet" href="style-control.css" />
+    <style>
+        /* Estilo específico rápido para posicionar imagem no canto */
+        .product-view { position: relative; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); min-height: 220px; }
+        .product-view .corner-image { position: absolute; top: 20px; right: 20px; width: 180px; height: 180px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .product-view .details { max-width: 720px; }
+        .detail-actions { margin-top: 18px; }
+        .product-features ul { margin-left: 18px; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>OfficeSupply Online</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="produtos.html">Produtos</a></li>
+                    <li><a href="promocoes.html">Promoções</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="product-view" id="productView">
+            <img src="" alt="imagem" class="corner-image" id="cornerImage">
+            <div class="details">
+                <!-- Title, category, price, description and features will be injected here -->
+                <div class="detail-actions">
+                    <button class="add-to-cart-btn" id="addToCartBtn">Adicionar</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 OfficeSupply Online</p>
+    </footer>
+
+    <script src="cart.js"></script>
+    <script src="products.js"></script>
+    <script>
+        function getParam(name) {
+            const url = new URL(window.location.href);
+            return url.searchParams.get(name);
+        }
+
+        function renderProduct(product) {
+            if (!product) {
+                document.getElementById('productView').innerHTML = '<p>Produto não encontrado.</p>';
+                return;
+            }
+
+            document.getElementById('cornerImage').src = product.img;
+            document.getElementById('cornerImage').alt = product.title;
+
+            // Ensure elements exist and populate them
+            let titleEl = document.getElementById('pTitle');
+            if (!titleEl) { titleEl = document.createElement('h2'); titleEl.id = 'pTitle'; document.querySelector('.details').insertBefore(titleEl, document.querySelector('.detail-actions')); }
+            titleEl.textContent = product.title;
+
+            let cat = document.getElementById('pCategory');
+            if (!cat) { cat = document.createElement('p'); cat.id = 'pCategory'; cat.className = 'product-category'; document.querySelector('.detail-actions').parentNode.insertBefore(cat, document.querySelector('.detail-actions')); }
+            cat.textContent = 'Categoria: ' + product.category;
+
+            let price = document.getElementById('pPrice');
+            if (!price) { price = document.createElement('p'); price.id = 'pPrice'; price.className = 'product-price'; document.querySelector('.detail-actions').parentNode.insertBefore(price, document.querySelector('.detail-actions')); }
+            price.textContent = product.price;
+
+            let desc = document.getElementById('pDescription');
+            if (!desc) { desc = document.createElement('p'); desc.id = 'pDescription'; desc.className = 'product-description'; document.querySelector('.detail-actions').parentNode.insertBefore(desc, document.querySelector('.detail-actions')); }
+            desc.textContent = product.description;
+
+            let featuresDiv = document.getElementById('pFeatures');
+            if (!featuresDiv) { featuresDiv = document.createElement('div'); featuresDiv.id = 'pFeatures'; featuresDiv.className = 'product-features'; document.querySelector('.detail-actions').parentNode.insertBefore(featuresDiv, document.querySelector('.detail-actions')); }
+            featuresDiv.innerHTML = '<h3>Características:</h3><ul>' + product.features.map(function(f){ return '<li>' + f + '</li>'; }).join('') + '</ul>';
+
+            // wire add to cart (set up when DOM ready)
+            const addBtn = document.getElementById('addToCartBtn');
+            if (addBtn) {
+                addBtn.dataset.productId = product.id;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function(){
+            var id = getParam('id') || '1';
+            renderProduct(window.products && window.products[id]);
+            // attach click handler now that cart.js should be loaded
+            const addBtn = document.getElementById('addToCartBtn');
+            if (addBtn) {
+                addBtn.addEventListener('click', function(){
+                    const pid = this.dataset.productId || id;
+                    if (window.addToCart) window.addToCart(pid, 1);
+                    else alert('Função de carrinho não encontrada.');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

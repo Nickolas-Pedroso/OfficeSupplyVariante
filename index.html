@@ -13,9 +13,10 @@
             <nav>
                 <ul>
                     <li><a href="index.html">Início</a></li>
-                    <li><a href="#">Produtos</a></li>
+                    <li><a href="produtos.html">Produtos</a></li>
                     <li><a id="menu-promocoes" href="promocoes.html">Promoções</a></li>
-                    <li><a href="#">Contato</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                    <li><a href="cart.html">Carrinho</a></li>
                 </ul>
             </nav>
         </div>
@@ -35,7 +36,7 @@
                 <p class="product-description">
                     Um kit completo com itens essenciais de alta qualidade para o seu dia a dia no escritório. Inclui canetas, cadernos, post-its e organizadores. Perfeito para quem busca funcionalidade.
                 </p>
-                <button class="add-to-cart-btn">Adicionar ao Carrinho</button>
+                <button class="add-to-cart-btn" id="indexAddBtn">Adicionar ao Carrinho</button>
                 <div class="product-features">
                     <h3>Características:</h3>
                     <ul>
@@ -60,3 +61,19 @@
                     <p class="card-price">R$ 149,90</p>
                     <button class="add-to-cart-btn-small">Ver Detalhes</button>
                 </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="cart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            var btn = document.getElementById('indexAddBtn');
+            if (!btn) return;
+            btn.addEventListener('click', function(){
+                if (window.addToCart) window.addToCart('1', 1);
+                else alert('Função de carrinho não encontrada.');
+            });
+        });
+    </script>

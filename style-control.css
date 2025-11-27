@@ -329,3 +329,104 @@ footer p {
     padding: 5px 10px;
     border-radius: 20px;
 }
+
+/* Formulário de Contato */
+.contact {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.contact h2 {
+    color: #0056b3;
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 700px;
+}
+
+.contact-form label {
+    font-weight: bold;
+}
+
+.contact-form input,
+.contact-form textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.company-contact {
+    margin-top: 20px;
+    color: #333;
+}
+
+.company-contact a {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.company-contact a:hover {
+    text-decoration: underline;
+}
+
+/* Cart two-column layout and controls (matches example) */
+.two-column {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 20px;
+    align-items: start;
+}
+
+.cart-left h2 {
+    margin-top: 0;
+}
+
+.cart-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.cart-item {
+    background: white;
+    border: 1px solid #e6e6e6;
+    padding: 12px;
+    display: flex;
+    gap: 12px;
+    border-radius: 6px;
+    align-items: center;
+}
+
+.cart-thumb {
+    width: 100px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.cart-item-info h4 {
+    margin: 0 0 6px 0;
+    font-size: 1.05em;
+}
+
+.cart-price { color: #e67e22; font-weight: bold; margin-bottom: 8px; }
+.cart-controls { display: flex; gap: 8px; align-items: center; }
+.cart-controls button { padding: 6px 10px; border-radius: 4px; border: 1px solid #ccc; background: white; cursor: pointer; }
+.cart-controls input.cart-qty { width: 60px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
+
+.cart-right .summary-box { background: white; padding: 16px; border-radius: 8px; border: 1px solid #e6e6e6; }
+.summary-line { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #eee; }
+.summary-line.total { font-size: 1.2em; font-weight: bold; border-bottom: none; }
+.continue-btn { background:#ff6600; color: white; border: none; padding: 12px 20px; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 12px; }
+.link-btn { background: transparent; color: #c82333; border: 1px solid transparent; padding: 8px 12px; margin-top: 8px; cursor: pointer; }
+
+@media (max-width: 900px) {
+    .two-column { grid-template-columns: 1fr; }
+    .cart-right { order: 2; }
+}
